@@ -8,9 +8,9 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/scrape")
-async def scrape():
-    user_input = input("search for product:")
+async def scrape(user_input: str):
     url = 'https://www.snapdeal.com/'
     driver = webdriver.Chrome()
 
@@ -47,8 +47,8 @@ async def scrape():
         link1.append(link)
 
 
-        # dataframe = pd.DataFrame({"name":name1, "price":price1, "discount":discount1, "star":star1, "seller_name":seller_name1, "seller_star":seller_star1, "link":link1})
-        #
-        # dataframe.to_csv("data.csv")
+        dataframe = pd.DataFrame({"name":name1, "price":price1, "discount":discount1, "star":star1, "seller_name":seller_name1, "seller_star":seller_star1, "link":link1})
+
+        dataframe.to_csv("data.csv")
 
     return "scrape complete"
