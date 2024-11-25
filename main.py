@@ -48,7 +48,9 @@ async def scrape(user_input: str):
 
 
         dataframe = pd.DataFrame({"name":name1, "price":price1, "discount":discount1, "star":star1, "seller_name":seller_name1, "seller_star":seller_star1, "link":link1})
+        csv_path = "static/data.csv"
+        dataframe.to_csv(csv_path, index=False)
 
-        dataframe.to_csv("data.csv")
-
-    return "scrape complete"
+    return {
+        "csv_url": "/static/data.csv"
+    }

@@ -6,11 +6,11 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
-import json
+# import json
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/scrape")
 async def scrape(user_input: str):
     chrome_options = Options()
@@ -65,10 +65,14 @@ async def scrape(user_input: str):
         "link": link1
     })
 
-    dataframe.to_csv("data.csv", index=False)
 
-    json_data = dataframe.to_json(orient='records')
-    beautified_json = json.dumps(json.loads(json_data), indent=4)
-    driver.quit()
+    csv_path = "static/data.csv"
+    dataframe.to_csv(csv_path, index=False)
 
-    return beautified_json
+    # json_data = dataframe.to_json(orient='records')
+    # beautified_json = json.dumps(json.loads(json_data), indent=4)
+
+
+    return {
+        "csv_url": "/static/data.csv"
+    }

@@ -1,69 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snapdeal Product Scraper</title>
     <style>
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
         h1 {
-            color: #4CAF50;
+            font-size: 3em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 15px #00ffcc, 0 0 20px #00ffcc, 0 0 25px #0072ff, 0 0 30px #0072ff;
         }
-        form {
-            margin-bottom: 20px;
+
+        /* Form Styling */
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
-        input[type="text"] {
-            padding: 8px;
-            width: 300px;
-            margin-right: 10px;
+
+        .form-container:hover {
+            transform: translateY(-10px);
         }
-        button {
-            padding: 8px 16px;
-            background-color: #4CAF50;
+
+        .form-container label {
+            font-size: 1.2em;
+            color: #fff;
+            margin-bottom: 15px;
+            display: block;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Updated Input Styling */
+        .form-container input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 1.1em;
+            outline: none;
+            margin: 15px 0;
+            background-color: black;
             color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .form-container input[type="text"]:focus {
+            border-color: #0072ff;
+            background: linear-gradient(135deg, #00ffcc, #0072ff);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-container input[type="text"]:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+
+        .form-container button {
+            padding: 15px 35px;
+            background-color: #0072ff;
+            color: white;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container button:hover {
+            background-color: #005bb5;
+            transform: scale(1.05);
+        }
+
+        .form-container button:active {
+            background-color: #004488;
+        }
+
+        /* Result & Download Button */
+        .result {
+            margin-top: 40px;
+            font-size: 1.5em;
+            color: #fff;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        #downloadButton {
+            display: none;
+            margin-top: 30px;
+        }
+
+        #downloadButton a {
+            text-decoration: none;
+        }
+
+        #downloadButton button {
+            padding: 20px 50px;
+            background-color: #ff5c8d;
+            color: white;
+            font-size: 1.2em;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
-        button:hover {
-            background-color: #45a049;
+
+        #downloadButton button:hover {
+            background-color: #ff448d;
+            transform: scale(1.1);
         }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
+
+        #downloadButton button:active {
+            background-color: #d83f6f;
+        }
+
+        /* Windows-style Loading Spinner (dots) */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .spinner .dot {
+            width: 12px;
+            height: 12px;
+            margin: 0 5px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: bounce 1.5s infinite ease-in-out;
+            position: absolute;
+        }
+
+        .spinner .dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .spinner .dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .spinner .dot:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        /* Modern Loading Text */
+        .loading-text {
+            margin-top: 15px;
+            font-size: 1.2em;
+            color: #fff;
+            animation: fadeIn 1.5s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .form-container input[type="text"] {
+                width: 90%;
+                padding: 12px;
+            }
+
+            .form-container button {
+                padding: 12px 30px;
+            }
         }
     </style>
 </head>
-<body>
-    <h1>Snapdeal Product Scraper</h1>
-    <form id="searchForm" action="/scrape" method="get">
-        <label for="user_input">Enter Product Name:</label>
-        <input type="text" id="user_input" name="user_input" required>
-        <button type="submit">Scrape</button>
-    </form>
 
-    <div id="result"></div>
+<body>
+    <div class="container">
+        <h1>Snapdeal Product Scraper</h1>
+        <div class="form-container">
+            <label for="user_input">Enter Product Name:</label>
+            <input type="text" id="user_input" name="user_input" required placeholder="e.g. Smartphones, Laptops...">
+            <button type="submit" id="scrapeBtn">Scrape</button>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div id="downloadButton">
+            <a href="" id="downloadLink">
+                <button>Download CSV</button>
+            </a>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="loading-text">Loading, please wait...</div>
+        </div>
+    </div>
 
     <script>
-        // Handle form submission with JavaScript to show the result without refreshing the page
-        document.getElementById('searchForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent form from refreshing the page
+        function toggleLoadingSpinner(show) {
+            const spinner = document.getElementById('loadingSpinner');
+            if (show) {
+                spinner.style.display = 'block';
+            } else {
+                spinner.style.display = 'none';
+            }
+        }
+
+        document.getElementById('scrapeBtn').addEventListener('click', function (event) {
+            event.preventDefault();
 
             const userInput = document.getElementById('user_input').value;
 
-            // Send the input to the FastAPI endpoint
+            toggleLoadingSpinner(true);
+
             fetch(`/scrape?user_input=${encodeURIComponent(userInput)}`)
-                .then(response => response.text())
+                .then(response => response.json())
                 .then(data => {
-                    // Display the result in the result div
-                    document.getElementById('result').innerHTML = `<p>${data}</p>`;
+                    toggleLoadingSpinner(false);
+                    document.getElementById('result').innerHTML = `<p>Data Scraped Successfully!</p>`;
+                    const downloadButton = document.getElementById('downloadButton');
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = data.csv_url;
+                    downloadButton.style.display = 'block';
                 })
                 .catch(error => {
-                    document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                    toggleLoadingSpinner(false);
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
                 });
         });
     </script>
 </body>
+
 </html>
